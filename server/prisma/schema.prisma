@@ -1,0 +1,97 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model University {
+  id          Int          @id @default(autoincrement())
+  name        String
+  departments Department[]
+  createdAt   DateTime     @default(now())
+}
+
+model Department {
+  id           Int        @id @default(autoincrement())
+  name         String
+  university   University @relation(fields: [universityId], references: [id])
+  universityId Int
+  courses      Course[]
+  createdAt    DateTime   @default(now())
+}
+
+model Course {
+  id           Int        @id @default(autoincrement())
+  code         String
+  name         String
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  materials    Material[]
+  createdAt    DateTime   @default(now())
+}
+
+model User {
+  id                 Int        @id @default(autoincrement())
+  name               String
+  username           String     @unique
+  email              String     @unique
+  password           String
+  role               Role       @default(STUDENT)
+  profileImage       String? // optional
+  phone              String? // optional
+  bio                String? // optional
+  isVerified         Boolean    @default(false)
+  verificationToken  String? // for email verification
+  verificationExpiry DateTime? // token expiry
+  resetPasswordToken String?
+  resetPasswordExpiry DateTime?
+  materials          Material[] @relation("UserMaterials")
+  votes              Vote[]     @relation("UserVotes")
+  comments           Comment[]  @relation("UserComments")
+  createdAt          DateTime   @default(now())
+}
+
+model Material {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String? // optional
+  fileUrl     String
+  fileType    String
+  uploader    User      @relation("UserMaterials", fields: [uploaderId], references: [id])
+  uploaderId  Int
+  course      Course    @relation(fields: [courseId], references: [id])
+  courseId    Int
+  votes       Vote[]
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+}
+
+model Vote {
+  id         Int      @id @default(autoincrement())
+  value      Int // +1 = upvote, -1 = downvote
+  user       User     @relation("UserVotes", fields: [userId], references: [id])
+  userId     Int
+  material   Material @relation(fields: [materialId], references: [id])
+  materialId Int
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, materialId]) // one vote per user per material
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  content    String
+  user       User     @relation("UserComments", fields: [userId], references: [id])
+  userId     Int
+  material   Material @relation(fields: [materialId], references: [id])
+  materialId Int
+  createdAt  DateTime @default(now())
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}

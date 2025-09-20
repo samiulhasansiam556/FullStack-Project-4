@@ -16,8 +16,8 @@ model University {
 
 model Department {
   id           Int        @id @default(autoincrement())
-  name         String
-  university   University @relation(fields: [universityId], references: [id])
+  name         String     
+  university   University @relation(fields: [universityId], references: [id],onDelete:Cascade)
   universityId Int
   courses      Course[]
   createdAt    DateTime   @default(now())
@@ -25,9 +25,9 @@ model Department {
 
 model Course {
   id           Int        @id @default(autoincrement())
-  code         String
-  name         String
-  department   Department @relation(fields: [departmentId], references: [id])
+  code         String     
+  name         String     
+  department   Department @relation(fields: [departmentId], references: [id],onDelete:Cascade)
   departmentId Int
   materials    Material[]
   createdAt    DateTime   @default(now())
@@ -60,9 +60,9 @@ model Material {
   description String? // optional
   fileUrl     String
   fileType    String
-  uploader    User      @relation("UserMaterials", fields: [uploaderId], references: [id])
+  uploader    User      @relation("UserMaterials", fields: [uploaderId], references: [id],onDelete:Cascade)
   uploaderId  Int
-  course      Course    @relation(fields: [courseId], references: [id])
+  course      Course    @relation(fields: [courseId], references: [id],onDelete:Cascade)
   courseId    Int
   votes       Vote[]
   comments    Comment[]
@@ -72,9 +72,9 @@ model Material {
 model Vote {
   id         Int      @id @default(autoincrement())
   value      Int // +1 = upvote, -1 = downvote
-  user       User     @relation("UserVotes", fields: [userId], references: [id])
+  user       User     @relation("UserVotes", fields: [userId], references: [id],onDelete:Cascade)
   userId     Int
-  material   Material @relation(fields: [materialId], references: [id])
+  material   Material @relation(fields: [materialId], references: [id],onDelete:Cascade)
   materialId Int
   createdAt  DateTime @default(now())
 
@@ -84,9 +84,9 @@ model Vote {
 model Comment {
   id         Int      @id @default(autoincrement())
   content    String
-  user       User     @relation("UserComments", fields: [userId], references: [id])
+  user       User     @relation("UserComments", fields: [userId], references: [id],onDelete:Cascade)
   userId     Int
-  material   Material @relation(fields: [materialId], references: [id])
+  material   Material @relation(fields: [materialId], references: [id],onDelete:Cascade)
   materialId Int
   createdAt  DateTime @default(now())
 }

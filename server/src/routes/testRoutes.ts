@@ -12,7 +12,7 @@ const router = Router();
 
 router.get('/get-test', getTest);
 router.get('/get-all-users',protect,adminOnly,getUsers);
-router.delete('/delet-eusers',protect,adminOnly, deleteAllUsers);
+router.delete('/delet-users',protect,adminOnly, deleteAllUsers);
 
 
 

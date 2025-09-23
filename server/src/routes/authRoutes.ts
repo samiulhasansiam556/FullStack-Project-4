@@ -8,7 +8,7 @@ import { signUp,verifyEmail,signIn,forgotPassword,resetPassword} from '../contro
 const router= Router()
 
 router.post('/sign-up',signUp)
-router.get('/verifyemail/:id',verifyEmail)
+router.get('/verify-email/:id',verifyEmail)
 router.post('/sign-in',signIn)
 
 router.post("/forgot-password", forgotPassword);

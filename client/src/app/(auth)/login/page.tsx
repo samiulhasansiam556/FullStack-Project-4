@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { LoginForm,LogInResponse } from "@/app/types/type";
+import api from "@/services/axios";
 
 
 
@@ -13,7 +14,7 @@ export default function LoginPage() {
     password: "",
   });
 
-  const api = process.env.NEXT_PUBLIC_API_URL;
+  const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,8 +26,8 @@ export default function LoginPage() {
     console.log("Login submitted:", form);
 
     try {
-      const res = await axios.post<LogInResponse>(
-        `${api}/auth/sign-in`,
+      const res = await api.post<LogInResponse>(
+        `/auth/sign-in`,
         form,
         {
           headers: { "Content-Type": "application/json" },
@@ -35,9 +36,11 @@ export default function LoginPage() {
 
        console.log(res)
 
+
       if (res.status === 200) {
         toast.success( res.data?.message ||"Login successful!");
-        setForm({ email: "", password: "" });
+      //  setForm({ email: "", password: "" });
+        // document.cookie = `token=${res.data.token}; path=/; max-age=${7*24*60*60}`;
       } else {
         toast.error(res.data?.message || "Login failed.");
       }

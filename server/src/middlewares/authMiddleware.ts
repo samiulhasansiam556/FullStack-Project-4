@@ -13,8 +13,9 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
        // console.log(req.cookies.token)
       // console.log(5)
       // console.log(req.cookies.token)
+    //  console.log(req)
       const token = req.cookies.token; 
-      // console.log(token)
+       console.log(token)
     if (!token) return res.status(401).json({ message: " Not authorized, no token" });
  
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
@@ -25,6 +26,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     (req as any).user = user;
     next();
   } catch (error) {
+    console.log(error)
     return res.status(401).json({ message: "Not authorized, token failed" });
   }
 };

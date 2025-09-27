@@ -99,13 +99,14 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
 export const signIn = async (req: Request, res: Response) => {
   try {
-     
-    const {email,password} = req.body;
-     // console.log(req)
+    const { email, password } = req.body;
+    // console.log(req)
     // console.log(email,password)
 
     if (!email || !password)
-      return res.status(400).json({ message: "Email and Password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and Password are required" });
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(400).json({ message: "Invalid Credential" });
@@ -126,20 +127,18 @@ export const signIn = async (req: Request, res: Response) => {
       }
     );
 
-    // store in cookie
     res.cookie("token", token, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "development",
-      sameSite: "strict",
+      httpOnly: true, // safer (not accessible from JS)
+      secure: false, // must be false in dev (no HTTPS on localhost)
+      sameSite: "lax", // works fine for same-origin dev
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res
-      .status(200)
-      .json({
-        message: "Login successful",
-        user: { id: user.id, email: user.email, role: user.role, token: token },
-      });
+    return res.status(200).json({
+      message: "Login successful",
+      user: { id: user.id, email: user.email, role: user.role },
+      token: token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -152,7 +151,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(400).json({ message: "User not found" });
 
-     if (!user.isVerified) return res.status(400).json({ message: "Verify email Address" });
+    if (!user.isVerified)
+      return res.status(400).json({ message: "Verify email Address" });
     // generate token
     const token = crypto.randomBytes(32).toString("hex");
 
@@ -187,9 +187,10 @@ export const resetPassword = async (req: Request, res: Response) => {
     const { token } = req.params;
     const { password } = req.body;
 
-    if(!password) return res.status(400).json({message: "Password is required"})
+    if (!password)
+      return res.status(400).json({ message: "Password is required" });
 
-   // console.log(token,password)
+    // console.log(token,password)
 
     const user = await prisma.user.findFirst({
       where: { resetPasswordToken: token },

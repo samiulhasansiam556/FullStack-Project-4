@@ -8,10 +8,15 @@ import prisma from '../lib/PrismaClient';
 
 export const getTest = (req:Request, res:Response) => {
     res.status(200).json({ "message": "User retrieved successfully" });
+
 }
 
 export const getUsers = async (req:Request, res:Response) => {
 
+   // console.log(req)
+   const token = req.cookies.token; 
+   console.log((token))
+  
     const users = await prisma.user.findMany({
         select: {
             id:true,

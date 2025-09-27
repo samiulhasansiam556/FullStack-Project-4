@@ -11,7 +11,7 @@ const router = Router();
 
 
 router.get('/get-test', getTest);
-router.get('/get-all-users',protect,adminOnly,getUsers);
+router.get('/get-all-users',protect,getUsers);
 router.delete('/delet-users',protect,adminOnly, deleteAllUsers);
 
 

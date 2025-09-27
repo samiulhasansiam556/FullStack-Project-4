@@ -21,6 +21,8 @@ export interface LoginForm {
 export interface LogInResponse {
   ok: boolean;
   message: string;
+  user:object;
+  token: string;
 }
 
 

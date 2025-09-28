@@ -2,6 +2,7 @@
 import {Router} from 'express';
 import { deleteMaterial, getMaterialsByUniversity,
  getMaterialsByUniversityForOne, getStudentProfile,getUniversity,
+ logout,
  uploadMaterial} from '../controller/userController';
 import { protect,adminOnly } from '../middlewares/authMiddleware';
 import {getMyProfile,updateProfile,changePassword} from '../controller/userController';
@@ -14,6 +15,7 @@ const router = Router();
 router.get('/get-profile',protect,getMyProfile)
 router.put('/update-profile',protect,updateProfile)
 router.put('/change-password',protect,changePassword)
+router.post('/log-out',protect,logout)
 
 
 

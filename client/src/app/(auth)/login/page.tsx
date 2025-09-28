@@ -5,10 +5,12 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { LoginForm,LogInResponse } from "@/app/types/type";
 import api from "@/services/axios";
+import { useRouter } from "next/navigation";
 
-
+  
 
 export default function LoginPage() {
+     const router = useRouter();
   const [form, setForm] = useState<LoginForm>({
     email: "",
     password: "",
@@ -23,6 +25,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     console.log("Login submitted:", form);
 
     try {
@@ -34,12 +37,15 @@ export default function LoginPage() {
         }
       );
 
-       console.log(res)
+      console.log(res)
 
 
       if (res.status === 200) {
         toast.success( res.data?.message ||"Login successful!");
-      //  setForm({ email: "", password: "" });
+       setForm({ email: "", password: "" });
+       if(res.data.user.role == "STUDENT" )  router.push("/")
+        else router.push("/admin-dashboard")
+    
         // document.cookie = `token=${res.data.token}; path=/; max-age=${7*24*60*60}`;
       } else {
         toast.error(res.data?.message || "Login failed.");

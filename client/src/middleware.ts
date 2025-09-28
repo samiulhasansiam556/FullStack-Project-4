@@ -21,7 +21,8 @@ export async function middleware(req: NextRequest) {
     }
 
     const secretKey = new TextEncoder().encode(JWT_SECRET);
-    await jwtVerify(token, secretKey);
+   const res =  await jwtVerify(token, secretKey);
+   console.log(res.payload.role)
 
     return NextResponse.next();
   } catch (err) {

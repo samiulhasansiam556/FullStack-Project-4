@@ -21,8 +21,16 @@ export interface LoginForm {
 export interface LogInResponse {
   ok: boolean;
   message: string;
-  user:object;
   token: string;
+  user: {
+    role: string;
+    // Add other user properties you need
+    id?: string;
+    name?: string;
+    username?: string;
+    email?: string;
+    profileImage?: string;
+  };
 }
 
 
@@ -38,3 +46,7 @@ export interface ForgetPasswordResponse {
 export interface ResetPasswordResponse {
   message: string;
 }
+
+export interface ChangePasswordResponse {
+  message: string;
+};

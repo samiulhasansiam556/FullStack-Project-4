@@ -1,0 +1,32 @@
+export default function Home() {
+  return (
+    <main className="relative min-h-screen flex items-center justify-center text-center text-white bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
+      {/* Hero Overlay */}
+      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+
+      {/* Content */}
+      <div className="relative z-10 px-6 max-w-3xl">
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
+          Share & Access University Materials Easily
+        </h1>
+        <p className="text-lg md:text-xl mb-8">
+          UniShare is your go-to platform for sharing notes, assignments, and resources with your peers. Upload and download materials with ease.
+        </p>
+        <div className="flex justify-center gap-6">
+          <a
+            href="/upload"
+            className="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg shadow-lg text-lg font-semibold"
+          >
+            Upload
+          </a>
+          <a
+            href="/download"
+            className="bg-white text-indigo-700 hover:bg-gray-100 px-6 py-3 rounded-lg shadow-lg text-lg font-semibold"
+          >
+            Download
+          </a>
+        </div>
+      </div>
+    </main>
+  );
+}

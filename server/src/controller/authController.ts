@@ -127,9 +127,11 @@ export const signIn = async (req: Request, res: Response) => {
       }
     );
 
+     const isProd = process.env.NODE_ENV === "production";
+
     res.cookie("token", token, {
       httpOnly: true, // safer (not accessible from JS)
-      secure: false, // must be false in dev (no HTTPS on localhost)
+      secure: isProd, // must be false in dev (no HTTPS on localhost)
       sameSite: "lax", // works fine for same-origin dev
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

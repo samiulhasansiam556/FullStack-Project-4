@@ -43,7 +43,8 @@ export const getMyProfile = async (req: Request, res: Response) => {
         createdAt: true,
       },
     });
-    res.json(user);
+    
+        res.status(200).json({ message: "Profile get successfully", user});
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -53,13 +54,34 @@ export const getMyProfile = async (req: Request, res: Response) => {
 export const updateProfile = async (req: Request, res: Response) => {
     try {
         const { name, username, phone, bio, profileImage } = req.body;
- 
-         const userName = await prisma.user.findUnique({ where: { username } });
-         if(userName) return res.status(400).json({message: "USERNAME ALREADY EXIST"})
+        const currentUserId = req.user.id;
+
+        console.log(req.body)
+
+        // Only check username if it's being changed
+        if (username) {
+            const existingUser = await prisma.user.findFirst({
+                where: {
+                    username: username,
+                    NOT: { id: currentUserId }
+                },
+                select: { id: true } // Only select id for efficiency
+            });
+
+            if (existingUser) {
+                return res.status(400).json({ message: "Username is already taken" });
+            }
+        }
 
         const updated = await prisma.user.update({
-            where: { id: req.user.id },
-            data: { name, username, phone, bio, profileImage },
+            where: { id: currentUserId },
+            data: { 
+                ...(name && { name }),
+                ...(username && { username }),
+                ...({ phone }),
+                ...({ bio }),
+                ...(profileImage && { profileImage })
+            },
             select: {
                 id: true,
                 name: true,
@@ -73,8 +95,9 @@ export const updateProfile = async (req: Request, res: Response) => {
             },
         });
 
-        res.json({ message: "Profile updated", user: updated });
+        res.status(200).json({ message: "Profile updated successfully", user: updated });
     } catch (error) {
+        console.error("Update profile error:", error);
         res.status(500).json({ message: "Server error" });
     }
 };
@@ -83,7 +106,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 export const changePassword = async (req: Request, res: Response) => {
   try {
     const { oldPassword, newPassword } = req.body;
-console.log(oldPassword,newPassword)
+    //console.log(oldPassword,newPassword)
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -103,6 +126,25 @@ console.log(oldPassword,newPassword)
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+//  Logout
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true on prod
+      sameSite: "lax",
+    });
+
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error during logout" });
+  }
+};
+
 
 
 

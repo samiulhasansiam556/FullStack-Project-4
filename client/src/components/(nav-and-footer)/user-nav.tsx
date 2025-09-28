@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { Menu, X } from "lucide-react";
 import handleLogout from "@/services/logout";
+import MyContext from "@/context/MyContext";
 
 export default function UserNav() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+    const context = useContext(MyContext);
+    if (!context) throw new Error('StudentDashboard must be used within MyState');
+  
+    const { user} = context;
 
   return (
     <nav className="w-full bg-white shadow-md px-6 py-3 flex items-center justify-between">
@@ -36,7 +42,7 @@ export default function UserNav() {
       {/* Right: Profile */}
       <div>
         <img
-          src="https://i.pravatar.cc/40"
+          src={user?.profileImage}
           alt="Profile"
           className="w-10 h-10 rounded-full cursor-pointer"
           onClick={() => setIsProfileOpen(true)}
@@ -74,12 +80,12 @@ export default function UserNav() {
             </button>
             <div className="flex flex-col items-center">
               <img
-                src="https://i.pravatar.cc/100"
+                src={user?.profileImage}
                 alt="User"
                 className="w-20 h-20 rounded-full mb-3"
               />
-              <h3 className="font-bold text-lg">John Doe</h3>
-              <p className="text-sm text-gray-500">johndoe@email.com</p>
+              <h3 className="font-bold text-lg">J{user?.name}</h3>
+              <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
             <div className="mt-6 flex flex-col gap-3 text-gray-700">
               <a href="/profile-edit" className="hover:text-indigo-600">Profile Edit</a>

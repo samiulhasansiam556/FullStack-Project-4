@@ -18,8 +18,8 @@ export default function Footer() {
         </div>
         <div>
           <h4 className="text-white font-semibold mb-3">Contact</h4>
-          <p>Email: support@unishare.com</p>
-          <p>Phone: +880 1234 567890</p>
+          <p>Email: samiulhasansiam556@gmail.com</p>
+          <p>Phone: +880 1704479730</p>
         </div>
       </div>
       <div className="text-center text-sm text-gray-500 mt-8">

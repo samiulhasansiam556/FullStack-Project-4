@@ -2,6 +2,7 @@
 import {Router} from 'express';
 import { deleteMaterial, getMaterialsByUniversity,
  getMaterialsByUniversityForOne, getStudentProfile,getUniversity,
+ getUniversityHierarchy,
  logout,
  uploadMaterial} from '../controller/userController';
 import { protect,adminOnly } from '../middlewares/authMiddleware';
@@ -20,11 +21,12 @@ router.post('/log-out',protect,logout)
 
 
 router.get("/get-university", protect, getUniversity);
+router.get("/get-universityhierarchy", protect, getUniversityHierarchy);
 router.post("/upload-material", protect, upload.single("document"), uploadMaterial);
 router.delete("/delete-materials/:id", protect, deleteMaterial);
 router.get("/university/:universityId", protect, getMaterialsByUniversity);
 router.get("/university", protect, getMaterialsByUniversityForOne);
-router.get("/student/:userId", protect, getStudentProfile);
+router.get("/student", protect, getStudentProfile);
 
 
 

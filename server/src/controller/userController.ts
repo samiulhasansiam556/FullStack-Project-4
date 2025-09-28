@@ -156,8 +156,11 @@ export const uploadMaterial = async (req: Request, res: Response) => {
   try {
     const { title, description, courseId } = req.body;
 
+    console.log(title,description,courseId,req.file)
+
     if (!req.file) return res.status(400).json({ message: "File required" });
 
+    
 
      //find course with department and university
      const course = await prisma.course.findUnique({
@@ -175,18 +178,23 @@ export const uploadMaterial = async (req: Request, res: Response) => {
 
      if(!course) return res.status(404).json({message: "course not found"})
 
-// create folder path
-    const folderPath = `materials/${course.department.university.name}/${course.department.name}/${course.name}`;
+
+      // create folder path
+      const safeName = (name: string) => name.replace(/\s+/g, "_");
+      const folderPath = `materials/${safeName(course.department.university.name)}/${safeName(course.department.name)}/${safeName(course.name)}`;
+    // const folderPath = `materials/${course.department.university.name}/${course.department.name}/${course.name}`;
 
     // upload to Cloudinary in dynamic folder
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: folderPath,
-      resource_type: "auto",
+      resource_type: "raw",
+      format: "pdf",
     });
 
     // remove local temp file
     fs.unlinkSync(req.file.path);
 
+     console.log(result)
     const material = await prisma.material.create({
       data: {
         title,
@@ -219,6 +227,33 @@ export const getUniversity = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Server error" });
     }
 }
+
+export const getUniversityHierarchy = async (req: Request, res: Response) => {
+  try {
+    const universities = await prisma.university.findMany({
+      include: {
+        departments: {
+          include: {
+            courses: true, // fetch courses under each department
+          },
+        },
+      },
+    });
+
+    if (!universities || universities.length === 0) {
+      return res.status(404).json({ message: "No universities found" });
+    }
+
+    return res.status(200).json({
+      message: "Universities with departments and courses",
+      universities,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 
 export const getMaterialsByUniversity = async (req: Request, res: Response) => {
@@ -290,7 +325,11 @@ export const getMaterialsByUniversityForOne = async (req: Request, res: Response
 // Get a student's public profile with uploaded materials
 export const getStudentProfile = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    //const { userId } = req.params;
+
+     const userId = req.user?.id;
+
+    console.log(userId)
 
     const student = await prisma.user.findUnique({
       where: { id: Number(userId) },
@@ -318,6 +357,7 @@ export const getStudentProfile = async (req: Request, res: Response) => {
 
     res.json(student);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Error fetching student profile", error });
   }
 };

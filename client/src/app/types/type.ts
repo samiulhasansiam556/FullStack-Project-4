@@ -66,11 +66,7 @@ export interface Department {
   courses: Course[];
 }
 
-export interface University {
-  id: number;
-  name: string;
-  departments: Department[];
-}
+
 
 
 
@@ -160,3 +156,14 @@ interface Student {
 export interface StudentResponse {
   data: User;
 }
+
+
+export interface University {
+  id: number;
+  name: string;
+  createdAt: string;
+  departments: Department[];
+}
+
+
+

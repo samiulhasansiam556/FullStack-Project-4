@@ -6,6 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 function redirectToSignIn(req: NextRequest) {
   const loginUrl = new URL("/login", req.url);
+  const adminUrl = new URL("/admin-dashboard", req.url);
   return NextResponse.redirect(loginUrl);
 }
 
@@ -21,8 +22,8 @@ export async function middleware(req: NextRequest) {
     }
 
     const secretKey = new TextEncoder().encode(JWT_SECRET);
-   const res =  await jwtVerify(token, secretKey);
-   console.log(res.payload.role)
+    const res = await jwtVerify(token, secretKey);
+    console.log(res.payload.role);
 
     return NextResponse.next();
   } catch (err) {
@@ -31,15 +32,12 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-
 export const config = {
   matcher: [
     // protect everything except login, forget, register, reset-password, and Next.js static files
     "/((?!login|forget|register|reset-password|_next|favicon.ico).*)",
   ],
 };
-
-
 
 // export const config = {
 //   matcher: [

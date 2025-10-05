@@ -3,41 +3,23 @@
 
 import { useState, ReactNode,useEffect } from "react";
 import MyContext from "./MyContext";
-import { University,Material,StudentProfile,User,UserProfileResponse } from "@/app/types/type";
 import api from "@/services/axios";
+import { University,Material,StudentProfile,User,UserProfileResponse } from "@/app/types/type";
 
 interface MyStateProps {
   children: ReactNode;
 }
 
 function MyState({ children }: MyStateProps) {
+  const [user, setUser] = useState<User | null>(null);
   const [universities, setUniversities] = useState<University[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const [search, setSearch] = useState<number>(0);
 
 
-// Fetch universities once when app starts
-  useEffect(() => {
-    const fetchUniversities = async () => {
-      try {
-        const res = await api.get<{universities:any,message:string}>("/user/get-universityhierarchy"); // your getUniversityHierarchy endpoint
-        if (res.status===200) {
-          setUniversities(res.data?.universities);
-        } else {
-          console.error(res.data?.message || "Failed to fetch universities");
-        }
-      } catch (err) {
-        console.error("Error fetching universities:", err);
-      }
-    };
 
-    fetchUniversities();
-  }, []);
-
-
-  // Fetch universities once when app starts
+  // Fetch my Profile once when app starts
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -52,9 +34,37 @@ function MyState({ children }: MyStateProps) {
         console.error("Error fetching universities:", err);
       }
     };
-
+    
     fetchUser();
   }, []);
+  
+  // console.log(user)
+
+  
+// Fetch universities once when app starts
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const res = await api.get<{universities:any,message:string}>("/user/get-universityhierarchy"); // your getUniversityHierarchy endpoint
+       
+        if (res.status===200) {
+          setUniversities(res.data?.universities);
+        } else {
+          console.error(res.data?.message || "Failed to fetch universities");
+        }
+      } catch (err) {
+        console.error("Error fetching universities:", err);
+      }
+    };
+
+    fetchUniversities();
+  }, []);
+ 
+ // console.log(universities)
+
+
+
+
 
 
   return (

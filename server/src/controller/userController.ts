@@ -26,7 +26,7 @@ declare global {
 
 
 
-// 👤 Get own profile
+//  Get own profile
 export const getMyProfile = async (req: Request, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
@@ -44,19 +44,19 @@ export const getMyProfile = async (req: Request, res: Response) => {
       },
     });
     
-        res.status(200).json({ message: "Profile get successfully", user});
+    return res.status(200).json({ message: "Profile get successfully", user});
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// ✏️ Update profile
+// Update profile
 export const updateProfile = async (req: Request, res: Response) => {
     try {
         const { name, username, phone, bio, profileImage } = req.body;
         const currentUserId = req.user.id;
 
-        console.log(req.body)
+        //console.log(req.body)
 
         // Only check username if it's being changed
         if (username) {
@@ -102,7 +102,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     }
 };
 
-// 🔑 Change password
+//  Change password
 export const changePassword = async (req: Request, res: Response) => {
   try {
     const { oldPassword, newPassword } = req.body;
@@ -127,12 +127,10 @@ export const changePassword = async (req: Request, res: Response) => {
   }
 };
 
-
-
-//  Logout
+// Logout
 export const logout = async (req: Request, res: Response) => {
   try {
-    res.clearCookie("token", {
+      res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // true on prod
       sameSite: "lax",
@@ -144,183 +142,6 @@ export const logout = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Server error during logout" });
   }
 };
-
-
-
-
-
-
-// upload materials
-
-export const uploadMaterial = async (req: Request, res: Response) => {
-  try {
-    const { title, description, courseId } = req.body;
-
-    console.log(title,description,courseId,req.file)
-
-    if (!req.file) return res.status(400).json({ message: "File required" });
-
-    
-
-     //find course with department and university
-     const course = await prisma.course.findUnique({
-      where: {
-        id: Number(courseId)
-      },
-      include: {
-        department: {
-          include: {
-            university: true,
-          }
-        }
-      }
-     })
-
-     if(!course) return res.status(404).json({message: "course not found"})
-
-
-      // create folder path
-      const safeName = (name: string) => name.replace(/\s+/g, "_");
-      const folderPath = `materials/${safeName(course.department.university.name)}/${safeName(course.department.name)}/${safeName(course.name)}`;
-    // const folderPath = `materials/${course.department.university.name}/${course.department.name}/${course.name}`;
-
-    // upload to Cloudinary in dynamic folder
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: folderPath,
-      resource_type: "raw",
-      format: "pdf",
-    });
-
-    // remove local temp file
-    fs.unlinkSync(req.file.path);
-
-     console.log(result)
-    const material = await prisma.material.create({
-      data: {
-        title,
-        description,
-        fileUrl: result.secure_url,
-        fileType: req.file.mimetype,
-        uploaderId: req.user.id,
-        courseId: Number(courseId),
-      },
-    });
-
-    res.status(201).json(material);
-  } catch (err) {
-    console.log(err)
-    res.status(500).json({ message: "Upload failed", error: err });
-  }
-}
-
-
-export const getUniversity = async (req: Request, res: Response) => {
-    try {
-        const universities = await prisma.university.findMany();
-
-        if (!universities || universities.length === 0) {
-            return res.status(400).json({ message: "There is no University" });
-        }
-
-        return res.status(200).json({ message: "Universities exist", universities });
-    } catch (e) {
-        res.status(500).json({ message: "Server error" });
-    }
-}
-
-export const getUniversityHierarchy = async (req: Request, res: Response) => {
-  try {
-    const universities = await prisma.university.findMany({
-      include: {
-        departments: {
-          include: {
-            courses: true, // fetch courses under each department
-          },
-        },
-      },
-    });
-
-    if (!universities || universities.length === 0) {
-      return res.status(404).json({ message: "No universities found" });
-    }
-
-    return res.status(200).json({
-      message: "Universities with departments and courses",
-      universities,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
-
-
-
-export const getMaterialsByUniversity = async (req: Request, res: Response) => {
-  try {
-    const { universityId } = req.params;
-    
-    // Validate universityId
-    const uniId = Number(universityId);
-    if (isNaN(uniId)) {
-      return res.status(400).json({ message: "Invalid university ID" });
-    }
-
-    const materials = await prisma.material.findMany({
-      where: {
-        course: {
-          department: {
-            universityId: uniId // ← Use the converted number
-          }
-        }
-      },
-      include: {
-        course: {
-          include: {
-            department: {
-              include: { university: true }
-            }
-          }
-        }
-      }
-    });
-
-    res.json(materials);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-
-
-// Get all materials uploaded by the logged-in user
-export const getMaterialsByUniversityForOne = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user.id; // comes from auth middleware
-
-    const materials = await prisma.material.findMany({
-      where: {
-        uploaderId: userId,
-      },
-      include: {
-        course: {
-          include: {
-            department: {
-              include: { university: true }
-            }
-          }
-        }
-      }
-    });
-
-    res.json(materials);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching your materials", error });
-  }
-};
-
-
-
 
 // Get a student's public profile with uploaded materials
 export const getStudentProfile = async (req: Request, res: Response) => {
@@ -364,6 +185,212 @@ export const getStudentProfile = async (req: Request, res: Response) => {
 
 
 
+
+
+// get universiyies
+export const getUniversity = async (req: Request, res: Response) => {
+  try {
+    const universities = await prisma.university.findMany();
+    
+    if (!universities || universities.length === 0) {
+      return res.status(400).json({ message: "There is no University" });
+    }
+    
+    return res.status(200).json({ message: "Universities exist", universities });
+  } catch (e) {
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+// get university hierarchy
+export const getUniversityHierarchy = async (req: Request, res: Response) => {
+  try {
+    const universities = await prisma.university.findMany({
+      include: {
+        departments: {
+          include: {
+            courses: {
+               include: {
+                 materials: true,
+               }
+            }
+          },
+        },
+      },
+    });
+
+    if (!universities || universities.length === 0) {
+      return res.status(404).json({ message: "No universities found" });
+    }
+
+    return res.status(200).json({
+      message: "Universities with departments and courses",
+      universities,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+// Get all materials by university id
+export const getMaterialsByUniversity = async (req: Request, res: Response) => {
+  try {
+    const { universityId } = req.params;
+
+    // Validate universityId
+    const uniId = Number(universityId);
+    if (isNaN(uniId)) {
+      return res.status(400).json({ message: "Invalid university ID" });
+    }
+
+    const materials = await prisma.material.findMany({
+      where: {
+        course: {
+          department: {
+            universityId: uniId // ← Use the converted number
+          }
+        }
+      },
+      include: {
+        course: {
+          include: {
+            department: {
+              include: { university: true }
+            }
+          }
+        },
+        uploader: {
+          select:{
+            id:true,
+            name:true,
+            username:true,
+            profileImage:true,
+            bio:true,
+          }
+      },
+      }
+     
+    });
+    res.json(materials);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+// Get all materials uploaded by the logged-in user
+export const getUserWithDetails = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const uid = Number(userId);
+
+    if (isNaN(uid)) {
+      return res.status(400).json({ message: "userId is not valid" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: uid },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        bio: true,
+        profileImage: true,
+        materials: {
+          include: {
+            course: {
+              include: {
+                department: {
+                  include: { university: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Always return materials as [] if null
+    res.json({ ...user, materials: user.materials ?? [] });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user details", error });
+  }
+};
+
+
+
+
+// upload materials
+export const uploadMaterial = async (req: Request, res: Response) => {
+  try {
+    const { title, description, courseId } = req.body;
+
+    // console.log(title,description,courseId,req.file)
+
+    if (!req.file) return res.status(400).json({ message: "File required" });
+
+
+     //find course with department and university
+     const course = await prisma.course.findUnique({
+      where: {
+        id: Number(courseId)
+      },
+      include: {
+        department: {
+          include: {
+            university: true,
+          }
+        }
+      }
+     })
+
+     if(!course) return res.status(404).json({message: "course not found"})
+
+
+      // create folder path
+      const safeName = (name: string) => name.replace(/\s+/g, "_");
+      const folderPath = `materials/${safeName(course.department.university.name)}/${safeName(course.department.name)}/${safeName(course.name)}`;
+    // const folderPath = `materials/${course.department.university.name}/${course.department.name}/${course.name}`;
+
+    // upload to Cloudinary in dynamic folder
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: folderPath,
+      resource_type: "raw",
+      format: "pdf",
+    });
+
+    // remove local temp file
+    fs.unlinkSync(req.file.path);
+
+    //console.log(result)
+    const material = await prisma.material.create({
+      data: {
+        title,
+        description,
+        fileUrl: result.secure_url,
+        fileType: req.file.mimetype,
+        uploaderId: req.user.id,
+        courseId: Number(courseId),
+      },
+    });
+
+    res.status(201).json(material);
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: "Upload failed", error: err });
+  }
+};
+
+
+
 // delete metarials
 export const deleteMaterial = async (req: Request, res: Response) => {
   try {
@@ -374,7 +401,7 @@ export const deleteMaterial = async (req: Request, res: Response) => {
     const material = await prisma.material.findUnique({ where: { id: Number(id) } });
     if (!material) return res.status(404).json({ message: "Material not found" });
 
-    if (material.uploaderId !== userId && userRole !== "ADMIN || STUDENT") {
+    if (material.uploaderId !== userId) {
       return res.status(403).json({ message: "Not authorized to delete this material" });
     }
 
@@ -387,5 +414,3 @@ export const deleteMaterial = async (req: Request, res: Response) => {
 };
 
 
-
-;

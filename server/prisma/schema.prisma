@@ -23,6 +23,7 @@ model Department {
   createdAt    DateTime   @default(now())
 }
 
+
 model Course {
   id           Int        @id @default(autoincrement())
   code         String     
@@ -32,6 +33,7 @@ model Course {
   materials    Material[]
   createdAt    DateTime   @default(now())
 }
+
 
 model User {
   id                 Int        @id @default(autoincrement())
@@ -54,6 +56,7 @@ model User {
   createdAt          DateTime   @default(now())
 }
 
+
 model Material {
   id          Int       @id @default(autoincrement())
   title       String
@@ -69,6 +72,7 @@ model Material {
   createdAt   DateTime  @default(now())
 }
 
+
 model Vote {
   id         Int      @id @default(autoincrement())
   value      Int // +1 = upvote, -1 = downvote
@@ -77,9 +81,9 @@ model Vote {
   material   Material @relation(fields: [materialId], references: [id],onDelete:Cascade)
   materialId Int
   createdAt  DateTime @default(now())
-
   @@unique([userId, materialId]) // one vote per user per material
 }
+
 
 model Comment {
   id         Int      @id @default(autoincrement())

@@ -1,17 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import api from "@/services/axios";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { LoginForm,LogInResponse } from "@/app/types/type";
-import api from "@/services/axios";
-import { useRouter } from "next/navigation";
-
-  
+import { LoginForm, LogInResponse } from "@/app/types/type";
 
 export default function LoginPage() {
-     const router = useRouter();
-     const [form, setForm] = useState<LoginForm>({
+  const router = useRouter();
+  const [form, setForm] = useState<LoginForm>({
     email: "",
     password: "",
   });
@@ -26,26 +24,24 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log("Login submitted:", form);
+    //console.log("Login submitted:", form);
 
     try {
-      const res = await api.post<LogInResponse>(
-        `/auth/sign-in`,
-        form,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await api.post<LogInResponse>(`/auth/sign-in`, form, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      console.log(res)
-
+      //console.log(res);
 
       if (res.status === 200) {
-        toast.success( res.data?.message ||"Login successful!");
-       setForm({ email: "", password: "" });
-       if(res.data.user.role == "STUDENT" )  router.push("/")
-        else router.push("/admin-dashboard")
-    
+        toast.success(res.data?.message || "Login successful!");
+        setForm({ email: "", password: "" });
+        const role = res.data.user.role;
+        if (role === "STUDENT") {
+          router.push("/");
+        } else {
+          router.push("/admin-dashboard"); // or user dashboard
+        }
         // document.cookie = `token=${res.data.token}; path=/; max-age=${7*24*60*60}`;
       } else {
         toast.error(res.data?.message || "Login failed.");
@@ -104,17 +100,16 @@ export default function LoginPage() {
           >
             Log In
           </button>
-          
         </form>
-        
+
         <button className="flex justify-right mt-2">
-           <a
+          <a
             href="/forget"
             className="text-indigo-600  font-medium hover:underline"
           >
             Forgot Password
-           </a>
-          </button>
+          </a>
+        </button>
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-600">
@@ -126,8 +121,6 @@ export default function LoginPage() {
             Sign Up
           </a>
         </p>
-
-        
       </div>
     </div>
   );

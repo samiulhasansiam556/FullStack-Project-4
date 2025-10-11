@@ -147,10 +147,7 @@ export const logout = async (req: Request, res: Response) => {
 export const getStudentProfile = async (req: Request, res: Response) => {
   try {
     //const { userId } = req.params;
-
      const userId = req.user?.id;
-
-    console.log(userId)
 
     const student = await prisma.user.findUnique({
       where: { id: Number(userId) },
@@ -180,6 +177,50 @@ export const getStudentProfile = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: "Error fetching student profile", error });
+  }
+};
+
+
+// Get all materials uploaded by the logged-in user
+export const getUserWithDetails = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const uid = Number(userId);
+
+    if (isNaN(uid)) {
+      return res.status(400).json({ message: "userId is not valid" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: uid },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        bio: true,
+        profileImage: true,
+        materials: {
+          include: {
+            course: {
+              include: {
+                department: {
+                  include: { university: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Always return materials as [] if null
+    res.json({ ...user, materials: user.materials ?? [] });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user details", error });
   }
 };
 
@@ -234,7 +275,6 @@ export const getUniversityHierarchy = async (req: Request, res: Response) => {
 };
 
 
-
 // Get all materials by university id
 export const getMaterialsByUniversity = async (req: Request, res: Response) => {
   try {
@@ -279,52 +319,6 @@ export const getMaterialsByUniversity = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
-
-// Get all materials uploaded by the logged-in user
-export const getUserWithDetails = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-    const uid = Number(userId);
-
-    if (isNaN(uid)) {
-      return res.status(400).json({ message: "userId is not valid" });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: uid },
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        bio: true,
-        profileImage: true,
-        materials: {
-          include: {
-            course: {
-              include: {
-                department: {
-                  include: { university: true },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // ✅ Always return materials as [] if null
-    res.json({ ...user, materials: user.materials ?? [] });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching user details", error });
-  }
-};
-
 
 
 

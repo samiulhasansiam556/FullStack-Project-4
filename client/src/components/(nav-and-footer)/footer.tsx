@@ -1,3 +1,6 @@
+import Link from "next/link";
+
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 py-8">
@@ -13,19 +16,19 @@ export default function Footer() {
           <h4 className="text-white font-semibold mb-3">Quick Links</h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="/" className="hover:text-indigo-400">
+              <Link href="/" className="hover:text-indigo-400">
                 Home
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/about" className="hover:text-indigo-400">
+              <Link href="/about" className="hover:text-indigo-400">
                 About
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/contact" className="hover:text-indigo-400">
+              <Link href="/contact" className="hover:text-indigo-400">
                 Contact
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -34,19 +37,19 @@ export default function Footer() {
           <h4 className="text-white font-semibold mb-3">Quick Links</h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="/download" className="hover:text-indigo-400">
+              <Link href="/download" className="hover:text-indigo-400">
                 Download
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/upload" className="hover:text-indigo-400">
+              <Link href="/upload" className="hover:text-indigo-400">
                 Upload
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/dashboard" className="hover:text-indigo-400">
+              <Link href="/dashboard" className="hover:text-indigo-400">
                 Dashboard
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

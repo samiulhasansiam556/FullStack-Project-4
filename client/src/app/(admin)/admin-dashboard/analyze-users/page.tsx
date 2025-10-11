@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "@/services/axios";
 import toast from "react-hot-toast";
 import {
@@ -30,7 +30,7 @@ type RoleCount = { role: string; count: number };
 type Contributor = { id: number; name: string; username: string; materialsCount: number };
 type TimePoint = { date: string; count: number };
 type Voter = { userId: number; name: string; username: string; votes?: number; comments?: number };
-type UnivMat = { universityId: number; universityName: string; count: number };
+type UnivUser = { universityId: number; universityName: string; count: number };
 
 type AnalyticsResponse = {
   totals: Totals;
@@ -39,7 +39,7 @@ type AnalyticsResponse = {
   uploadsOverTime: TimePoint[];
   topVoters: Voter[];
   topCommenters: Voter[];
-  materialsByUniversity: UnivMat[];
+  usersByUniversity: UnivUser[];
 };
 
 const COLORS = ["#2563EB", "#10B981", "#F59E0B", "#EF4444", "#7C3AED", "#06B6D4"];
@@ -64,26 +64,28 @@ export default function AdminAnalyzeUsersPage() {
     load();
   }, []);
 
-  const totalDocs = data?.totals.totalMaterials ?? 0;
+  // ✅ safely handle null data
+  const usersByUniversity = data?.usersByUniversity ?? [];
 
-  // prepare data for charts
   const rolePieData = data?.roleCounts ?? [];
-  const topContributorsBar = data?.topContributors.map((c) => ({
-    name: c.username || c.name,
-    count: c.materialsCount,
-  })) || [];
+  const topContributorsBar =
+    data?.topContributors.map((c) => ({
+      name: c.username || c.name,
+      count: c.materialsCount,
+    })) || [];
 
-  const uploadsLine = data?.uploadsOverTime.map((p) => ({
-    date: p.date,
-    count: p.count,
-  })) || [];
+  const uploadsLine =
+    data?.uploadsOverTime.map((p) => ({
+      date: p.date,
+      count: p.count,
+    })) || [];
 
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Analyze Users & Activity</h1>
 
       {loading && <p>Loading...</p>}
-      {!loading && !data && <p>No data</p>}
+      {!loading && !data && <p>No data available</p>}
 
       {data && (
         <>
@@ -109,7 +111,7 @@ export default function AdminAnalyzeUsersPage() {
 
           {/* Charts row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Role distribution pie */}
+            {/* Role distribution */}
             <div className="bg-white p-4 rounded shadow">
               <h3 className="font-semibold mb-2">Role Distribution</h3>
               <ResponsiveContainer width="100%" height={220}>
@@ -167,7 +169,9 @@ export default function AdminAnalyzeUsersPage() {
                 <tbody>
                   {data.topVoters.map((v) => (
                     <tr key={v.userId} className="border-t">
-                      <td className="py-2">{v.name} ({v.username})</td>
+                      <td className="py-2">
+                        {v.name} ({v.username})
+                      </td>
                       <td className="text-right">{v.votes}</td>
                     </tr>
                   ))}
@@ -187,7 +191,9 @@ export default function AdminAnalyzeUsersPage() {
                 <tbody>
                   {data.topCommenters.map((c) => (
                     <tr key={c.userId} className="border-t">
-                      <td className="py-2">{c.name} ({c.username})</td>
+                      <td className="py-2">
+                        {c.name} ({c.username})
+                      </td>
                       <td className="text-right">{c.comments}</td>
                     </tr>
                   ))}
@@ -196,17 +202,27 @@ export default function AdminAnalyzeUsersPage() {
             </div>
           </div>
 
-          {/* materials by university */}
+          {/* ✅ Users by University */}
           <div className="bg-white p-4 rounded shadow">
-            <h3 className="font-semibold mb-2">Materials by University</h3>
-            <ul className="space-y-2">
-              {data.materialsByUniversity.map((m) => (
-                <li key={m.universityId} className="flex justify-between">
-                  <div>{m.universityName}</div>
-                  <div className="font-medium">{m.count}</div>
+            <h3 className="font-semibold mb-2">Users by University</h3>
+
+            <ul className="space-y-2 mb-4">
+              {usersByUniversity.map((u) => (
+                <li key={u.universityId} className="flex justify-between">
+                  <div>{u.universityName}</div>
+                  <div className="font-medium">{u.count}</div>
                 </li>
               ))}
             </ul>
+
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={usersByUniversity}>
+                <XAxis dataKey="universityName" />
+                <YAxis />
+                <ReTooltip />
+                <Bar dataKey="count" name="Users" fill="#7C3AED" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </>
       )}

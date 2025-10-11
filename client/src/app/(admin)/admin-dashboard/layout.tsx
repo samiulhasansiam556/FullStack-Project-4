@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     { href: "/admin-dashboard/delete-documents", label: "Delete PDF" },
     { href: "/admin-dashboard/create-instance", label: "Create Instance" },
     { href: "/admin-dashboard/delete-instance", label: "Delete Instance" },
+     { href: "/admin-dashboard/update-instance", label: "Update Instance" },
     { href: "/admin-dashboard/find-user", label: "Find User" },
   ];
 

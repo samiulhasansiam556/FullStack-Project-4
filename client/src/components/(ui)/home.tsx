@@ -1,4 +1,5 @@
 import UserNav from "../(nav-and-footer)/user-nav";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -22,18 +23,18 @@ export default function Home() {
             UniShare is your go-to platform for sharing notes, assignments, and resources with your peers. Upload and download materials with ease.
           </p>
           <div className="flex justify-center gap-6">
-            <a
+            <Link
               href="/upload"
               className="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg shadow-lg text-lg font-semibold"
             >
               Upload
-            </a>
-            <a
+            </Link>
+            <Link
               href="/download"
               className="bg-white text-indigo-700 hover:bg-gray-100 px-6 py-3 rounded-lg shadow-lg text-lg font-semibold"
             >
               Download
-            </a>
+            </Link>
           </div>
         </div>
       </main>

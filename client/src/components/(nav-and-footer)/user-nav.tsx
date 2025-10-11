@@ -4,11 +4,11 @@ import { useState, useContext, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import handleLogout from "@/services/logout";
 import MyContext from "@/context/MyContext";
+import Link from "next/link";
 
 export default function UserNav() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -18,7 +18,6 @@ export default function UserNav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
 
   const context = useContext(MyContext);
   if (!context) throw new Error("StudentDashboard must be used within MyState");
@@ -39,21 +38,11 @@ export default function UserNav() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex gap-6 text-gray-700 font-medium">
-          <a href="/" className="hover:text-indigo-600">
-            Home
-          </a>
-          <a href="/about" className="hover:text-indigo-600">
-            About
-          </a>
-          <a href="/contact" className="hover:text-indigo-600">
-            Contact
-          </a>
-          <a href="/download" className="hover:text-indigo-600">
-            Download
-          </a>
-          <a href="/upload" className="hover:text-indigo-600">
-            Upload
-          </a>
+          <Link href="/" className="hover:text-indigo-600">Home</Link>
+          <Link href="/about" className="hover:text-indigo-600">About</Link>
+          <Link href="/contact" className="hover:text-indigo-600">Contact</Link>
+          <Link href="/download" className="hover:text-indigo-600">Download</Link>
+          <Link href="/upload" className="hover:text-indigo-600">Upload</Link>
         </div>
       </div>
 
@@ -74,22 +63,11 @@ export default function UserNav() {
             <button className="self-end" onClick={() => setIsMobileOpen(false)}>
               <X className="h-6 w-6" />
             </button>
-            <a href="/" className="hover:text-indigo-600">
-              Home
-            </a>
-            <a href="/about" className="hover:text-indigo-600">
-              About
-            </a>
-            <a href="/contact" className="hover:text-indigo-600">
-              Contact
-            </a>
-            <a href="/download" className="hover:text-indigo-600">
-              Download
-            </a>
-            <a href="/upload" className="hover:text-indigo-600">
-              Upload
-            </a>
-            
+            <Link href="/" className="hover:text-indigo-600">Home</Link>
+            <Link href="/about" className="hover:text-indigo-600">About</Link>
+            <Link href="/contact" className="hover:text-indigo-600">Contact</Link>
+            <Link href="/download" className="hover:text-indigo-600">Download</Link>
+            <Link href="/upload" className="hover:text-indigo-600">Upload</Link>
           </div>
         </div>
       )}
@@ -110,23 +88,23 @@ export default function UserNav() {
                 alt="User"
                 className="w-20 h-20 rounded-full mb-3"
               />
-              <h3 className="font-bold text-lg">J{user?.name}</h3>
+              <h3 className="font-bold text-lg">{user?.name}</h3>
               <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
             <div className="mt-6 flex flex-col gap-3 text-gray-700">
-              <a href="/profile-edit" className="hover:text-indigo-600">
+              <Link href="/profile-edit" className="hover:text-indigo-600">
                 Profile Edit
-              </a>
-              <a href="/change-password" className="hover:text-indigo-600">
+              </Link>
+              <Link href="/change-password" className="hover:text-indigo-600">
                 Change Password
-              </a>
-              <a href="/dashboard" className="hover:text-indigo-600">
+              </Link>
+              <Link href="/dashboard" className="hover:text-indigo-600">
                 Dashboard
-              </a>
+              </Link>
               {user?.role === "ADMIN" && (
-                <a href="/admin-dashboard" className="hover:text-indigo-600">
+                <Link href="/admin-dashboard" className="hover:text-indigo-600">
                   Admin Dashboard
-                </a>
+                </Link>
               )}
               <button
                 onClick={handleLogout}

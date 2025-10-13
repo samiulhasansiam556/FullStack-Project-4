@@ -43,6 +43,8 @@ export const signUp = async (req: Request, res: Response) => {
 
     const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
 
+    console.log(verifyUrl)
+
     // send email
     await transporter.sendMail({
       from: `"Campus Share" <${process.env.EMAIL_USER}>`,

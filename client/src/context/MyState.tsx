@@ -23,10 +23,10 @@ function MyState({ children }: MyStateProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get<UserProfileResponse>("/user/get-profile"); // your getUniversityHierarchy endpoint
+        const res = await api.get<UserProfileResponse>("/user/get-profile"); 
         if (res.status===200) {
           setUser(res.data?.user);
-          console.log(res.data?.user)
+          //console.log(res.data?.user)
         } else {
           console.error(res.data?.message || "Failed to fetch universities");
         }
@@ -37,16 +37,14 @@ function MyState({ children }: MyStateProps) {
     
     fetchUser();
   }, []);
-  
-  // console.log(user)
+
 
   
 // Fetch universities once when app starts
   useEffect(() => {
     const fetchUniversities = async () => {
       try {
-        const res = await api.get<{universities:any,message:string}>("/user/get-universityhierarchy"); // your getUniversityHierarchy endpoint
-       
+        const res = await api.get<{universities:any,message:string}>("/user/get-universityhierarchy"); 
         if (res.status===200) {
           setUniversities(res.data?.universities);
         } else {
@@ -60,8 +58,6 @@ function MyState({ children }: MyStateProps) {
     fetchUniversities();
   }, []);
  
- // console.log(universities)
-
 
 
 

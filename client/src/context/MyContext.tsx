@@ -3,9 +3,8 @@ import { createContext } from "react";
 import { University,Material,StudentProfile,User} from "@/app/types/type";
 
 interface KnownTypes {
-user: User | null; // Added user
-  setUser: (user: User | null) => void; // Added setUser
-  theme?: "light" | "dark";
+  user: User | null; 
+  setUser: (user: User | null) => void; 
   universities: University[];
   setUniversities: (u: University[]) => void;
   materials?: Material[];
@@ -20,16 +19,16 @@ interface FlexibleContextType extends KnownTypes {
   [key: string]: any;
 }
 
-// ✅ Create context with defaults that match MyState
+// Create context with defaults that match MyState
 const MyContext = createContext<FlexibleContextType>({
   universities: [],
   setUniversities: () => {},
-  materials: [], // Added default
-  setMaterials: () => {}, // Added default
-  studentProfile: null, // Added default
-  setStudentProfile: () => {}, // Added default
-  user: null, // Added default
-  setUser: () => {}, // Added default
+  materials: [], 
+  setMaterials: () => {}, 
+  studentProfile: null,
+  setStudentProfile: () => {}, 
+  user: null, 
+  setUser: () => {}, 
   search: 0,
   setSearch: () => {},
 });

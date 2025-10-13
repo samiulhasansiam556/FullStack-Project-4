@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import api from "@/services/axios";
 import toast from "react-hot-toast";
+import { useContext } from "react";
+import MyContext from "@/context/MyContext";
 // Types
 interface University {
   id: number;
@@ -23,6 +25,7 @@ interface Course {
 }
 
 export default function CreateInstance() {
+  
   // Form states
   const [universities, setUniversities] = useState<University[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);

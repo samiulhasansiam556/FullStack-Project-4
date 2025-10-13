@@ -1,4 +1,8 @@
-export default function About() {
+
+
+
+
+export default async function About() {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-6 py-12 bg-gradient-to-b from-gray-50 to-gray-100 text-gray-800">
       <div className="max-w-3xl text-center">

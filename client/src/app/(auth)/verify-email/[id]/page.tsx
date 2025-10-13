@@ -16,6 +16,7 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     const verify = async () => {
+      console.log("verify-email")
       try {
         const res = await axios.get<VerifyEmailResponse>(`${api}/auth/verify-email/${id}`);
         if (res.status === 200) {

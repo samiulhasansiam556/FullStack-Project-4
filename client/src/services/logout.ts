@@ -1,4 +1,4 @@
-import api from "@/services/axios"; // axios instance with { withCredentials: true }
+import api from "@/services/axios"; 
 import toast from "react-hot-toast";
 
 const handleLogout = async () => {

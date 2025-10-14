@@ -4,8 +4,10 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { SignUpForm, SignUpResponse } from "@/app/types/type";
+import Link from "next/link";
 
 export default function SignUpPage() {
+ 
   const [form, setForm] = useState<SignUpForm>({
     name: "",
     username: "",
@@ -23,7 +25,6 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
    // console.log("Form submitted:", form);
-
     try {
       const res = await axios.post<SignUpResponse>(
         `${api}/auth/sign-up`,
@@ -32,11 +33,10 @@ export default function SignUpPage() {
           headers: { "Content-Type": "application/json" },
         }
       );
-
        // console.log("res",res)
       if (res.status === 201) {
          toast.success(res.data.message || "User registered. Check your email to verify.")
-        //  setForm({ name: "", username: "", email: "", password: "" });
+         setForm({ name: "", username: "", email: "", password: "" });
       } else {
         toast.error(res.data?.message || "Signup failed.");
       }
@@ -46,6 +46,8 @@ export default function SignUpPage() {
     }
   };
 
+
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
@@ -53,9 +55,7 @@ export default function SignUpPage() {
           Create an Account
         </h2>
 
-        {/* ✅ No action, React handles it */}
         <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-          {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
@@ -121,7 +121,7 @@ export default function SignUpPage() {
 
           {/* Submit Button */}
           <button
-            type="submit" // ✅ ensures React handles submission
+            type="submit" 
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg shadow-md transition"
           >
             Sign Up
@@ -130,12 +130,12 @@ export default function SignUpPage() {
 
         <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <a
+          <Link
             href="/login"
             className="text-indigo-600 font-medium hover:underline"
           >
             Sign In
-          </a>
+          </Link>
         </p>
       </div>
     </div>

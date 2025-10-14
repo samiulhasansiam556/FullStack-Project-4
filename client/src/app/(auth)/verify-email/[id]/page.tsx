@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { VerifyEmailResponse } from "@/app/types/type";
 
 export default function VerifyEmailPage() {
-  const { id } = useParams(); // token from URL (/verify/[id])
+  const { id } = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -16,7 +16,7 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     const verify = async () => {
-      console.log("verify-email")
+     // console.log("verify-email")
       try {
         const res = await axios.get<VerifyEmailResponse>(`${api}/auth/verify-email/${id}`);
         if (res.status === 200) {

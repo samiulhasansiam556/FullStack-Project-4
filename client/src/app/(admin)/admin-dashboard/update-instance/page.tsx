@@ -41,8 +41,8 @@ export default function ManageHierarchyPage() {
         body.code = editCode;
       }
 
-      const res = await api.put(url, body);
-      toast.success(res.data.message);
+      const res = await api.put<any>(url, body);
+      toast.success(res.data?.message);
       setEditItem(null);
       // refresh list
       const updated = await api.get<{ universities: any[] }>("/admin/get-universityhierarchy");

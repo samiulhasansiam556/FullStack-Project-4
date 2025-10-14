@@ -3,18 +3,13 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <>
-      {/* Sticky Navbar - sits on top of content */}
+   <>
       <div className="sticky top-0 z-50">
         <UserNav/>
       </div>
 
-      {/* Hero Section - content starts from top */}
       <main className="relative min-h-screen flex items-center justify-center text-center text-white bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
-        {/* Hero Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-
-        {/* Content */}
         <div className="relative z-10 px-6 max-w-3xl">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
             Share & Access University Materials Easily
@@ -38,8 +33,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-      
-
     </>
   );
 }

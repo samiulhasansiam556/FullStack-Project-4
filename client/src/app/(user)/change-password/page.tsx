@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import api from "@/services/axios"; // 👈 your axios instance with withCredentials: true
+import api from "@/services/axios"; 
 import { ChangePasswordResponse } from "@/app/types/type";
 
 export default function ChangePasswordPage() {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "@/services/axios"; // axios instance
 import { toast } from "react-hot-toast";
+import { User } from "@/app/types/type";
 
 export default function FindUserPage() {
   const [username, setUsername] = useState("");
@@ -18,8 +19,8 @@ export default function FindUserPage() {
   useEffect(() => {
     const fetchHierarchy = async () => {
       try {
-        const res = await api.get("/user/get-universityhierarchy");
-        setUniversities(res.data.universities);
+        const res = await api.get<any>("/user/get-universityhierarchy");
+        setUniversities(res.data?.universities);
       } catch (err) {
         console.error(err);
         toast.error("Failed to load university hierarchy");
@@ -35,7 +36,7 @@ export default function FindUserPage() {
     setUser(null);
 
     try {
-      const res = await api.get(`/admin/get-user-by-username/${username}`);
+      const res = await api.get<any>(`/admin/get-user-by-username/${username}`);
       setUser(res.data.user);
       toast.success("User found");
     } catch (err: any) {
@@ -81,7 +82,7 @@ export default function FindUserPage() {
     (u) => u.id === Number(selectedUniversity)
   );
   const selectedDept = selectedUni?.departments?.find(
-    (d) => d.id === Number(selectedDepartment)
+    (d:any) => d.id === Number(selectedDepartment)
   );
 
   return (
@@ -156,7 +157,7 @@ export default function FindUserPage() {
               disabled={!selectedUniversity}
             >
               <option value="">All Departments</option>
-              {selectedUni?.departments?.map((d) => (
+              {selectedUni?.departments?.map((d:any) => (
                 <option key={d.id} value={d.id}>
                   {d.name}
                 </option>
@@ -171,7 +172,7 @@ export default function FindUserPage() {
               disabled={!selectedDepartment}
             >
               <option value="">All Courses</option>
-              {selectedDept?.courses?.map((c) => (
+              {selectedDept?.courses?.map((c:any) => (
                 <option key={c.id} value={c.id}>
                   {c.name} ({c.courseCode})
                 </option>

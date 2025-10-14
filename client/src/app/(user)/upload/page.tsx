@@ -5,9 +5,10 @@ import toast from "react-hot-toast";
 import api from "@/services/axios";
 import MyContext from "@/context/MyContext";
 
-export default function UploadMaterialPage() {
-  const { universities } = useContext(MyContext)!;
+export default function UploadMaterialPage() { 
 
+  const { universities } = useContext(MyContext)!;
+ 
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -18,12 +19,11 @@ export default function UploadMaterialPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // dynamic select handling
+
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
 
-    // reset dependent fields when parent changes
     if (name === "universityId") {
       setForm((prev) => ({ ...prev, departmentId: "", courseId: "" }));
     }
@@ -76,6 +76,7 @@ export default function UploadMaterialPage() {
     }
   };
 
+  
   // get selected options
   const selectedUniversity = universities.find((u) => u.id.toString() === form.universityId);
   const selectedDepartment = selectedUniversity?.departments.find(

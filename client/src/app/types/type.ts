@@ -1,5 +1,3 @@
-
-
 export interface SignUpForm {
   name: string;
   username: string;
@@ -12,7 +10,6 @@ export interface SignUpResponse {
   message: string;
 }
 
-
 export interface LoginForm {
   email: string;
   password: string;
@@ -24,7 +21,6 @@ export interface LogInResponse {
   token: string;
   user: {
     role: string;
-    // Add other user properties you need
     id?: string;
     name?: string;
     username?: string;
@@ -32,8 +28,6 @@ export interface LogInResponse {
     profileImage?: string;
   };
 }
-
-
 
 export interface VerifyEmailResponse {
   message: string;
@@ -49,15 +43,13 @@ export interface ResetPasswordResponse {
 
 export interface ChangePasswordResponse {
   message: string;
-};
+}
 
-
-
-
-
-export interface Course {
+export interface University {
   id: number;
   name: string;
+  createdAt: string;
+  departments: Department[];
 }
 
 export interface Department {
@@ -66,41 +58,38 @@ export interface Department {
   courses: Course[];
 }
 
-
-
-
+export interface Course {
+  id: number;
+  name: string;
+  materials: Material[]
+}
 
 export interface Material {
   id: number;
   title: string;
+  description?: string;
   fileUrl: string;
-  course: {
+  fileType: string;
+  uploaderId: number;
+  courseId: number;
+  createdAt: string;
+
+  // Populated relations
+  course?: {
     id: number;
     name: string;
-    department: {
+    department?: {
       id: number;
       name: string;
-      university: {
+      university?: {
         id: number;
         name: string;
       };
     };
   };
+
+  uploader?: User;
 }
-
-
-export interface StudentProfile {
-  id: number;
-  name: string;
-  username: string;
-  bio?: string;
-  profileImage?: string;
-  materials: Material[];
-}
-
-
-
-// types/user.types.ts
 
 export interface User {
   id: string;
@@ -115,39 +104,39 @@ export interface User {
 }
 
 export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-  PREMIUM = 'PREMIUM'
+  USER = "USER",
+  ADMIN = "ADMIN",
+  PREMIUM = "PREMIUM",
 }
 
-// Request interface extending Express Request
-export interface AuthRequest extends Request {
-  user: {
-    id: string;
-    username: string;
-    email: string;
-    role: UserRole;
-  };
+export interface UserProfile {
+  id: number;
+  name: string;
+  username: string;
+  bio?: string;
+  profileImage?: string;
+  materials: Material[];
 }
 
-// Response interface for the profile endpoint
+export interface StudentProfile {
+  id: number;
+  name: string;
+  username: string;
+  bio?: string;
+  profileImage?: string;
+  materials: Material[];
+}
+
 export interface UserProfileResponse {
   success: boolean;
   user: User;
   message?: string;
 }
 
-export interface ErrorResponse {
-  success: false;
-  error: string;
-  message?: string;
-}
-
-
 interface Student {
   bio: string;
   id: number;
-  materials: any[]; // or define proper Material interface if you know the structure
+  materials: any[];
   name: string;
   profileImage: string;
   username: string;
@@ -157,13 +146,17 @@ export interface StudentResponse {
   data: User;
 }
 
-
-export interface University {
-  id: number;
-  name: string;
-  createdAt: string;
-  departments: Department[];
+export interface AuthRequest extends Request {
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    role: UserRole;
+  };
 }
 
-
-
+export interface ErrorResponse {
+  success: false;
+  error: string;
+  message?: string;
+}

@@ -180,12 +180,13 @@ export default function AnalyzeDocuments() {
               dataKey="count"
               nameKey="name"
               outerRadius={120}
-              label={({ name, count }) => {
+              label={(props) => {
+                const { name, value } = props;
                 const percentage =
                   totalUniversityDocs === 0
                     ? 0
-                    : ((count / totalUniversityDocs) * 100).toFixed(1);
-                return `${name} (${count}, ${percentage}%)`;
+                    : ((Number(value) / totalUniversityDocs) * 100).toFixed(1);
+                return `${name} (${value}, ${percentage}%)`;
               }}
             >
               {universityData.map((_, i) => (
@@ -225,7 +226,7 @@ export default function AnalyzeDocuments() {
                 <LabelList
                   dataKey="percentage"
                   position="top"
-                  formatter={(val: string) => `${val}%`}
+                  formatter={(label) => (typeof label === "string" ? `${label}%` : label)}
                 />
               </Bar>
             </BarChart>
@@ -252,7 +253,7 @@ export default function AnalyzeDocuments() {
                 <LabelList
                   dataKey="percentage"
                   position="top"
-                  formatter={(val: string) => `${val}%`}
+                  formatter={(label) => typeof label === "string" ? `${label}%` : label}
                 />
               </Bar>
             </BarChart>

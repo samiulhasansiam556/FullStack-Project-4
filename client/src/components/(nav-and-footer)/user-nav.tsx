@@ -1,15 +1,20 @@
 "use client";
 
-import { useState, useContext, useEffect } from "react";
-import { Menu, X } from "lucide-react";
-import handleLogout from "@/services/logout";
-import MyContext from "@/context/MyContext";
+import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import MyContext from "@/context/MyContext";
+import handleLogout from "@/services/logout";
 
 export default function UserNav() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const context = useContext(MyContext);
+  if (!context) throw new Error("StudentDashboard must be used within MyState");
+
+  const { user } = context;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,30 +24,34 @@ export default function UserNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const context = useContext(MyContext);
-  if (!context) throw new Error("StudentDashboard must be used within MyState");
-
-  const { user } = context;
-
   return (
     <nav className="w-full bg-white shadow-md px-6 py-3 flex items-center justify-between">
-      {/* Left: Logo + Links */}
+
       <div className="flex items-center gap-8">
-        {/* Mobile Menu Button */}
+        
         <button className="lg:hidden p-2" onClick={() => setIsMobileOpen(true)}>
           <Menu className="h-6 w-6" />
         </button>
 
-        {/* Logo / Title */}
         <span className="text-xl font-bold text-indigo-600">UniShare</span>
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex gap-6 text-gray-700 font-medium">
-          <Link href="/" className="hover:text-indigo-600">Home</Link>
-          <Link href="/about" className="hover:text-indigo-600">About</Link>
-          <Link href="/contact" className="hover:text-indigo-600">Contact</Link>
-          <Link href="/download" className="hover:text-indigo-600">Download</Link>
-          <Link href="/upload" className="hover:text-indigo-600">Upload</Link>
+          <Link href="/" className="hover:text-indigo-600">
+            Home
+          </Link>
+          <Link href="/about" className="hover:text-indigo-600">
+            About
+          </Link>
+          <Link href="/contact" className="hover:text-indigo-600">
+            Contact
+          </Link>
+          <Link href="/download" className="hover:text-indigo-600">
+            Download
+          </Link>
+          <Link href="/upload" className="hover:text-indigo-600">
+            Upload
+          </Link>
         </div>
       </div>
 
@@ -63,14 +72,25 @@ export default function UserNav() {
             <button className="self-end" onClick={() => setIsMobileOpen(false)}>
               <X className="h-6 w-6" />
             </button>
-            <Link href="/" className="hover:text-indigo-600">Home</Link>
-            <Link href="/about" className="hover:text-indigo-600">About</Link>
-            <Link href="/contact" className="hover:text-indigo-600">Contact</Link>
-            <Link href="/download" className="hover:text-indigo-600">Download</Link>
-            <Link href="/upload" className="hover:text-indigo-600">Upload</Link>
+            <Link href="/" className="hover:text-indigo-600">
+              Home
+            </Link>
+            <Link href="/about" className="hover:text-indigo-600">
+              About
+            </Link>
+            <Link href="/contact" className="hover:text-indigo-600">
+              Contact
+            </Link>
+            <Link href="/download" className="hover:text-indigo-600">
+              Download
+            </Link>
+            <Link href="/upload" className="hover:text-indigo-600">
+              Upload
+            </Link>
           </div>
         </div>
       )}
+
 
       {/* Profile Modal (Right Side) */}
       {isProfileOpen && (
@@ -84,7 +104,7 @@ export default function UserNav() {
             </button>
             <div className="flex flex-col items-center">
               <img
-                src={user?.profileImage}
+                src={user?.profileImage ?? undefined}
                 alt="User"
                 className="w-20 h-20 rounded-full mb-3"
               />
@@ -116,6 +136,7 @@ export default function UserNav() {
           </div>
         </div>
       )}
+
     </nav>
   );
 }

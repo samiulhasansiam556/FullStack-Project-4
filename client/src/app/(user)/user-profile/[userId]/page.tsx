@@ -5,24 +5,17 @@ import { useParams } from "next/navigation";
 import api from "@/services/axios";
 import Image from "next/image";
 import Link from "next/link";
-import { University, Department, Course, Material } from "@/app/types/type";
+import { University, Department, Course, Material,UserProfile } from "@/app/types/type";
 
-interface UserProfile {
-  id: number;
-  name: string;
-  username: string;
-  bio?: string;
-  profileImage?: string;
-  materials: Material[];
-}
 
 export default function UserProfilePage() {
-const { userId } = useParams<{ userId: string }>();
+  const { userId } = useParams<{ userId: string }>();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-useEffect(() => {
+
+ useEffect(() => {
   const fetchProfile = async () => {
     try {
       const res = await api.get<UserProfile>(`/user/get-user-details/${userId}`);
@@ -43,8 +36,8 @@ useEffect(() => {
   const universities: University[] = Array.from(
     new Map(
       profile.materials.map((m) => [
-        m.course.department.university.id,
-        m.course.department.university as University,
+        m?.course?.department?.university?.id,
+        m.course?.department?.university as University,
       ])
     ).values()
   );
@@ -54,8 +47,28 @@ useEffect(() => {
     ? Array.from(
         new Map(
           profile.materials
-            .filter((m) => m.course.department.university.id === selectedUniversity.id)
-            .map((m) => [m.course.department.id, m.course.department])
+            .filter(
+              (m) =>
+                m.course?.department?.university?.id === selectedUniversity.id &&
+                m.course?.department?.id !== undefined &&
+                m.course?.department?.name !== undefined &&
+                m.course?.department?.university !== undefined
+            )
+            .map((m) => [
+              m.course!.department!.id,
+              {
+                id: m.course!.department!.id,
+                name: m.course!.department!.name,
+                university: m.course!.department!.university,
+                courses: profile.materials
+                  .filter(
+                    (mat) =>
+                      mat.course?.department?.id === m.course!.department!.id &&
+                      mat.course !== undefined
+                  )
+                  .map((mat) => mat.course!),
+              },
+            ])
         ).values()
       )
     : [];
@@ -65,27 +78,27 @@ useEffect(() => {
     ? Array.from(
         new Map(
           profile.materials
-            .filter((m) => m.course.department.id === selectedDepartment.id)
-            .map((m) => [m.course.id, m.course])
+            .filter((m) => m.course?.department?.id === selectedDepartment.id)
+            .map((m) => [m.course?.id, m.course])
         ).values()
-      )
+      ).filter((c): c is Course => c !== undefined)
     : [];
 
   // Filter materials
   let filteredMaterials: Material[] = profile.materials;
   if (selectedUniversity) {
     filteredMaterials = filteredMaterials.filter(
-      (m) => m.course.department.university.id === selectedUniversity.id
+      (m) => m.course?.department?.university?.id === selectedUniversity.id
     );
   }
   if (selectedDepartment) {
     filteredMaterials = filteredMaterials.filter(
-      (m) => m.course.department.id === selectedDepartment.id
+      (m) => m.course?.department?.id === selectedDepartment.id
     );
   }
   if (selectedCourse) {
     filteredMaterials = filteredMaterials.filter(
-      (m) => m.course.id === selectedCourse.id
+      (m) => m.course?.id === selectedCourse.id
     );
   }
 
@@ -148,7 +161,7 @@ useEffect(() => {
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
     {/* University Filter */}
     <div className="group">
-      <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+      <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
         <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
@@ -183,7 +196,7 @@ useEffect(() => {
     {/* Department Filter */}
     {selectedUniversity && (
       <div className="group">
-        <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+        <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
           <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
@@ -218,7 +231,7 @@ useEffect(() => {
     {/* Course Filter */}
     {selectedDepartment && (
       <div className="group">
-        <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+        <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
           <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
@@ -313,9 +326,9 @@ useEffect(() => {
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 sm:line-clamp-1">
                       {m.title}
                     </h3>
-                    {m.description && (
+                    {/* {m.description && (
                       <p className="text-gray-600 mt-1 text-sm line-clamp-2">{m.description}</p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -324,19 +337,19 @@ useEffect(() => {
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
-                    <span className="truncate max-w-[80px] sm:max-w-none">{m.course.name}</span>
+                    <span className="truncate max-w-[80px] sm:max-w-none">{m.course?.name}</span>
                   </span>
                   <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 sm:px-3 sm:py-1 rounded-full">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <span className="truncate max-w-[80px] sm:max-w-none">{m.course.department.name}</span>
+                    <span className="truncate max-w-[80px] sm:max-w-none">{m.course?.department?.name}</span>
                   </span>
                   <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 sm:px-3 sm:py-1 rounded-full">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <span className="truncate max-w-[80px] sm:max-w-none">{m.course.department.university.name}</span>
+                    <span className="truncate max-w-[80px] sm:max-w-none">{m.course?.department?.university?.name}</span>
                   </span>
                   {m.fileType && (
                     <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 sm:px-3 sm:py-1 rounded-full">
@@ -368,7 +381,7 @@ useEffect(() => {
                   <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  <span className="hidden sm:inline">Delete</span>
+                  <span className="hidden sm:inline cursor">Delete</span>
                   <span className="sm:hidden">Del</span>
                 </button>
               </div>

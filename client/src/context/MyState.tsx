@@ -15,7 +15,7 @@ function MyState({ children }: MyStateProps) {
   const [universities, setUniversities] = useState<University[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null);
-  const [search, setSearch] = useState<number>(0);
+
 
 
 
@@ -66,16 +66,14 @@ function MyState({ children }: MyStateProps) {
   return (
     <MyContext.Provider
       value={{
+        user,
+        setUser,
         universities,
         setUniversities,
         materials,
         setMaterials,
         studentProfile,
         setStudentProfile,
-        user,
-        setUser,
-        search,
-        setSearch,
       }}
     >
       {children}

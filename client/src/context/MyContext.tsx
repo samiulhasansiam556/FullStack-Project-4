@@ -11,8 +11,6 @@ interface KnownTypes {
   setMaterials?: (m: Material[]) => void;
   studentProfile?: StudentProfile | null;
   setStudentProfile?: (p: StudentProfile | null) => void;
-  search: number;
-  setSearch: (s: number) => void;
 }
 
 interface FlexibleContextType extends KnownTypes {

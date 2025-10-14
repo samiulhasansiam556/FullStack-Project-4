@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
 import api from "@/services/axios";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { LoginForm, LogInResponse } from "@/app/types/type";
 
@@ -23,16 +23,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     //console.log("Login submitted:", form);
-
     try {
       const res = await api.post<LogInResponse>(`/auth/sign-in`, form, {
         headers: { "Content-Type": "application/json" },
       });
-
       //console.log(res);
-
       if (res.status === 200) {
         toast.success(res.data?.message || "Login successful!");
         setForm({ email: "", password: "" });
@@ -40,7 +36,7 @@ export default function LoginPage() {
         if (role === "STUDENT") {
           router.push("/");
         } else {
-          router.push("/admin-dashboard"); // or user dashboard
+          router.push("/admin-dashboard"); 
         }
         // document.cookie = `token=${res.data.token}; path=/; max-age=${7*24*60*60}`;
       } else {
@@ -114,12 +110,12 @@ export default function LoginPage() {
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-600">
           Don’t have an account?{" "}
-          <a
+          <Link
             href="/register"
             className="text-indigo-600 font-medium hover:underline"
           >
             Sign Up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -5,34 +5,29 @@ import Link from "next/link";
 import Image from "next/image";
 import MyContext from "@/context/MyContext";
 import api from "@/services/axios";
-import { University, Department, Course} from "@/app/types/type";
+import { University, Department, Course,Material,User} from "@/app/types/type";
 
 // app/types/type.ts
 
-export interface User {
-  id: number;
-  name: string;
-  username: string;
-  profileImage: string;
-  bio: string;
-}
 
-export interface Material {
-  id: number;
-  title: string;
-  description: string;
-  fileUrl: string;
-  fileType: string;
-  uploaderId: number;
-  courseId: number;
-  createdAt: string;
-  course: Course;
-  uploader: User; // Add this
-}
+
+// export interface Material {
+//   id: number;
+//   title: string;
+//   description: string;
+//   fileUrl: string;
+//   fileType: string;
+//   uploaderId: number;
+//   courseId: number;
+//   createdAt: string;
+//   course: Course;
+//   uploader: User; 
+// }
 
 
 
 export default function DownloadMaterialsPage() {
+ 
   const { universities, materials, setMaterials } = useContext(MyContext);
 
   const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null);
@@ -44,17 +39,17 @@ export default function DownloadMaterialsPage() {
     setSelectedUniversity(uni);
     setSelectedDepartment(null);
     setSelectedCourse(null);
-
+ 
     if (uni) {
       try {
         const res = await api.get<Material[]>(`/user/university/${uni.id}`);
-        setMaterials(res.data);
+        setMaterials?.(res.data);
       } catch (err) {
         console.error("Error fetching materials:", err);
-        setMaterials([]);
+        setMaterials?.([]);
       }
     } else {
-      setMaterials([]);
+      setMaterials?.([]);
     }
   };
 
@@ -250,7 +245,7 @@ export default function DownloadMaterialsPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                               <span className="hidden xs:inline">{m.fileType.toUpperCase()}</span>
-                              <span className="xs:hidden">{m.fileType.slice(0, 3).toUpperCase()}</span>
+                              <span className="xs:hidden">{m.fileType.slice(12, 15).toUpperCase()}</span>
                             </span>
                           )}
                         </div>

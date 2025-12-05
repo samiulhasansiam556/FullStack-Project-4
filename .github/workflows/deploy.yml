@@ -42,7 +42,7 @@ jobs:
       # 4. Railway CLI Setup
       - name: Setup Railway CLI
         run: npm install -g @railway/cli
-      
+
       # 5. Trigger Railway redeploy
       - name: Trigger Railway Deploy
         env:

@@ -8,15 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: aormsby/railway-app-deploy-action
+        uses: actions/checkout@v4
       
+      # 1. Docker Hub Login
       - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
             -u "${{ secrets.DOCKER_USERNAME }}" \
             --password-stdin
       
-      # SERVER
+      # 2. Build and Push SERVER to Docker Hub
       - name: Build and Push Server
         run: |
           echo "📦 Building Server..."
@@ -27,7 +28,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-server:latest
           echo "✅ Server pushed: ${{ secrets.DOCKER_USERNAME }}/fullstack-server:${{ github.sha }}"
       
-      # CLIENT
+      # 3. Build and Push CLIENT to Docker Hub
       - name: Build and Push Client
         run: |
           echo "📦 Building Client..."
@@ -38,18 +39,26 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-client:latest
           echo "✅ Client pushed: ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }}"
       
-      # RAILWAY DEPLOY
-      # Railway Deploy - SERVICE names use koro
-      - name: Deploy Server to Railway
-        uses: aormsby/railway-app-deploy-action
-        with:
-          token: ${{ secrets.RAILWAY_TOKEN }}
-          service: fullstack-server  # ✅ SERVICE name
-          project: fullstack-app     # ✅ PROJECT name
+      # 4. Railway CLI Setup
+      - name: Setup Railway CLI
+        run: npm install -g @railway/cli
       
+      # 5. Deploy SERVER to Railway
+      - name: Deploy Server to Railway
+        run: |
+          railway login --token ${{ secrets.RAILWAY_TOKEN }}
+          # Link to server service
+          railway service connect fullstack-server
+          # Deploy from current directory (server/)
+          cd server
+          railway up
+      
+      # 6. Deploy CLIENT to Railway
       - name: Deploy Client to Railway
-        uses: aormsby/railway-app-deploy-action
-        with:
-          token: ${{ secrets.RAILWAY_TOKEN }}
-          service: fullstack-client  # ✅ SERVICE name
-          project: fullstack-app     # ✅ PROJECT name
+        run: |
+          railway login --token ${{ secrets.RAILWAY_TOKEN }}
+          # Link to client service
+          railway service connect fullstack-client
+          # Deploy from current directory (client/)
+          cd client
+          railway up

@@ -42,7 +42,3 @@ next-env.d.ts
 
 
 # ===== DOCKER FILES =====
-.dockerignore
-Dockerfile*
-docker-compose*
-compose*

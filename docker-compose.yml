@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./server/.env        # Server secrets like JWT_SECRET, DATABASE_URL
+    volumes:
+      - ./server/uploads:/app/uploads
+    # depends_on:
+    #   - db    # only if you still need a local DB
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+    env_file:
+      - ./client/.env.local  # Only public NEXT_PUBLIC_ variables
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+# Optional local DB, remove if using Supabase
+#   db:
+#     image: postgres:16-alpine
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_DB: fullstack
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     restart: unless-stopped
+
+# volumes:
+#   pgdata:

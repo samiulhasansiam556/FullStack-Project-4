@@ -1,0 +1,23 @@
+# Minimal .dockerignore
+.git
+.gitignore
+.gitattributes
+.DS_Store
+.env
+.env.local
+.env*.local
+node_modules
+.next
+dist
+build
+out
+.cache
+.turbo
+*.log
+logs
+coverage
+.nyc_output
+*.tsbuildinfo
+.dockerignore
+Dockerfile
+docker-compose*.yml

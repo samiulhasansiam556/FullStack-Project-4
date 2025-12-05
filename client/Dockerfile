@@ -20,7 +20,7 @@ WORKDIR /app
 # ...existing code...
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
+# COPY --from=builder /app/public ./public
 # COPY --from=builder /app/next.config.js ./next.config.ts
 COPY package*.json ./
 # ...existing code...

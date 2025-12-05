@@ -1,0 +1,52 @@
+name: Build, Push to Docker Hub, Deploy to Railway
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+            -u "${{ secrets.DOCKER_USERNAME }}" \
+            --password-stdin
+      
+      # SERVER
+      - name: Build and Push Server
+        run: |
+          echo "📦 Building Server..."
+          docker build ./server -t ${{ secrets.DOCKER_USERNAME }}/fullstack-server:${{ github.sha }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/fullstack-server:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/fullstack-server:latest
+          echo "🚀 Pushing Server to Docker Hub..."
+          docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-server:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-server:latest
+          echo "✅ Server pushed: ${{ secrets.DOCKER_USERNAME }}/fullstack-server:${{ github.sha }}"
+      
+      # CLIENT
+      - name: Build and Push Client
+        run: |
+          echo "📦 Building Client..."
+          docker build ./client -t ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/fullstack-client:latest
+          echo "🚀 Pushing Client to Docker Hub..."
+          docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-client:latest
+          echo "✅ Client pushed: ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }}"
+      
+      # RAILWAY DEPLOY
+      - name: Deploy Server to Railway
+        uses: railwayapp/action@v1.0.5
+        with:
+          token: ${{ secrets.RAILWAY_TOKEN }}
+          service: fullstack-server
+      
+      - name: Deploy Client to Railway
+        uses: railwayapp/action@v1.0.5
+        with:
+          token: ${{ secrets.RAILWAY_TOKEN }}
+          service: fullstack-client

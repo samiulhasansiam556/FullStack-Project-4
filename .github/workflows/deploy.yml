@@ -44,17 +44,18 @@ jobs:
       - name: Setup Railway CLI
         run: npm install -g @railway/cli
 
-      # Link local server folder to Railway service
+    # Link local server folder to Railway service
       - name: Link Server to Railway
         run: |
           cd server
-          railway up --service fullstack-server --project c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
+          railway up --service fullstack-server -- --project c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
 
       # Link local client folder to Railway service
       - name: Link Client to Railway
         run: |
           cd client
-          railway up --service fullstack-client --project c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
+          railway up --service fullstack-client -- --project c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
+
 
       # 5. Trigger Railway redeploy
       - name: Trigger Railway Deploy

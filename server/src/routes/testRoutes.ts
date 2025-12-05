@@ -1,6 +1,6 @@
 
 import {Router} from 'express';
-import {deleteAllUsers, getTest,getUsers, } from '../controller/testController';
+import { getTest, getUsers, deleteAllUsers} from '../controller/testController';
 import { protect,adminOnly } from '../middlewares/authMiddleware';
 
 

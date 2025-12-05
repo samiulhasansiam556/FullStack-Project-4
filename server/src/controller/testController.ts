@@ -15,7 +15,7 @@ export const getUsers = async (req:Request, res:Response) => {
 
    // console.log(req)
    const token = req.cookies.token; 
-   console.log((token))
+   //console.log((token))
   
     const users = await prisma.user.findMany({
         select: {

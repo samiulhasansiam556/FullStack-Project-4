@@ -1,10 +1,9 @@
 
 import {Router} from 'express';
-import { deleteMaterial, getMaterialsByUniversity,
- getUserWithDetails, getStudentProfile,getUniversity,
- getUniversityHierarchy,
- logout,uploadMaterial} from '../controller/userController';
 import { protect} from '../middlewares/authMiddleware';
+import { deleteMaterial, getMaterialsByUniversity,
+ getUserWithDetails, getStudentProfile,getUniversity,getUniversityHierarchy,
+ logout,uploadMaterial} from '../controller/userController';
 import {getMyProfile,updateProfile,changePassword} from '../controller/userController';
 import upload from '../config/upload';
 
@@ -20,15 +19,11 @@ router.get("/student", protect, getStudentProfile);
 router.get("/get-user-details/:userId", protect, getUserWithDetails);
 
 
-
 router.get("/get-university", protect, getUniversity);
 router.get("/get-universityhierarchy", protect, getUniversityHierarchy);
 router.post("/upload-material", protect, upload.single("document"), uploadMaterial);
 router.delete("/delete-material/:id", protect, deleteMaterial);
 router.get("/university/:universityId", protect, getMaterialsByUniversity); //not use
-
-
-
 
 
 export default router;

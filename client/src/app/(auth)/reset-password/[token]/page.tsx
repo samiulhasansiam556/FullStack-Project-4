@@ -5,7 +5,7 @@ import axios from "axios";
 import { ResetPasswordResponse } from "@/app/types/type";
 import toast from "react-hot-toast";
 
-const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/auth";
+const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export default function ResetPasswordPage() {
   const { token } = useParams();

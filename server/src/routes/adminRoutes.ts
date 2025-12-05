@@ -1,4 +1,4 @@
-// src/routes/adminRoutes.ts
+
 import { Router } from "express";
 import { protect, adminOnly } from "../middlewares/authMiddleware";
 import { createUniversity, getUniversities, deleteUniversity, getAllUsers, getUserByUsername, updateUserRole, deleteUser, getUserAnalytics, getDepartments, deleteDepartment, deleteCourse, getCourses } from "../controller/adminController";

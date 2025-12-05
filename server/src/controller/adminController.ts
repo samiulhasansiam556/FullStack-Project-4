@@ -283,7 +283,7 @@ export const getUserByUsername = async (req: Request, res: Response) => {
       },
     });
 
-    console.log("user",user)
+    //console.log("user",user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

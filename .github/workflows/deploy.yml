@@ -39,14 +39,17 @@ jobs:
           echo "✅ Client pushed: ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }}"
       
       # RAILWAY DEPLOY
+      # Railway Deploy - SERVICE names use koro
       - name: Deploy Server to Railway
         uses: railwayapp/action@v1.0.5
         with:
           token: ${{ secrets.RAILWAY_TOKEN }}
-          service: fullstack-server
+          service: fullstack-server  # ✅ SERVICE name
+          project: fullstack-app     # ✅ PROJECT name
       
       - name: Deploy Client to Railway
         uses: railwayapp/action@v1.0.5
         with:
           token: ${{ secrets.RAILWAY_TOKEN }}
-          service: fullstack-client
+          service: fullstack-client  # ✅ SERVICE name
+          project: fullstack-app     # ✅ PROJECT name

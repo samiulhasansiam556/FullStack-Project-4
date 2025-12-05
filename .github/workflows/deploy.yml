@@ -41,7 +41,7 @@ jobs:
       # RAILWAY DEPLOY
       # Railway Deploy - SERVICE names use koro
       - name: Deploy Server to Railway
-        uses: railwayapp/action@v1.0.5
+        uses: railwayapp/github-actions@v1.0.5
         with:
           token: ${{ secrets.RAILWAY_TOKEN }}
           service: fullstack-server  # ✅ SERVICE name

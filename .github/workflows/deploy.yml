@@ -43,22 +43,12 @@ jobs:
       - name: Setup Railway CLI
         run: npm install -g @railway/cli
       
-      # 5. Deploy SERVER to Railway
-      - name: Deploy Server to Railway
+      # 5. Trigger Railway redeploy
+      - name: Trigger Railway Deploy
         run: |
-          railway login --token ${{ secrets.RAILWAY_TOKEN }}
-          # Link to server service
-          railway service connect fullstack-server
-          # Deploy from current directory (server/)
-          cd server
-          railway up
-      
-      # 6. Deploy CLIENT to Railway
-      - name: Deploy Client to Railway
-        run: |
-          railway login --token ${{ secrets.RAILWAY_TOKEN }}
-          # Link to client service
-          railway service connect fullstack-client
-          # Deploy from current directory (client/)
-          cd client
-          railway up
+          npm install -g @railway/cli
+          railway login ${{ secrets.RAILWAY_TOKEN }}
+          
+          # Now Railway knows which files to use!
+          railway redeploy --service fullstack-server
+          railway redeploy --service fullstack-client

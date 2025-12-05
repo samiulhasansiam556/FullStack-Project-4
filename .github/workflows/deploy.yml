@@ -39,7 +39,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/fullstack-client:latest
           echo "✅ Client pushed: ${{ secrets.DOCKER_USERNAME }}/fullstack-client:${{ github.sha }}"
       
-      
+
      # 4. Railway CLI Setup
       - name: Setup Railway CLI
         run: npm install -g @railway/cli
@@ -54,7 +54,7 @@ jobs:
       - name: Link Client to Railway
         run: |
           cd client
-          railway up --service fullstack-0client --project c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
+          railway up --service fullstack-client --project c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
 
       # 5. Trigger Railway redeploy
       - name: Trigger Railway Deploy
@@ -63,5 +63,5 @@ jobs:
           RAILWAY_PROJECT_ID: c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
           RAILWAY_SKIP_DOT_RAILWAY: true
         run: |
-          railway redeploy --service fullstack-server
-          railway redeploy --service fullstack-0client
+          railway deploy --service fullstack-server
+          railway deploy --service fullstack-client

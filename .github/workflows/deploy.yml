@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: railwayapp/github-actions@v1.0.5
       
       - name: Login to Docker Hub
         run: |
@@ -48,7 +48,7 @@ jobs:
           project: fullstack-app     # ✅ PROJECT name
       
       - name: Deploy Client to Railway
-        uses: railwayapp/action@v1.0.5
+        uses: railwayapp/github-actions@v1.0.5
         with:
           token: ${{ secrets.RAILWAY_TOKEN }}
           service: fullstack-client  # ✅ SERVICE name

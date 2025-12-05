@@ -47,7 +47,7 @@ jobs:
       - name: Trigger Railway Deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: c6f921ce-01b1-4c30-9ed3-298dbd7da3f6
+          RAILWAY_PROJECT_ID: bd3f7d8e-8879-4d22-b562-1f811635460d
           RAILWAY_SKIP_DOT_RAILWAY: true
         run: |
           railway redeploy --service fullstack-server

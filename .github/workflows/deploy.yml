@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: railwayapp/github-actions@v1.0.5
+        uses: aormsby/railway-app-deploy-action
       
       - name: Login to Docker Hub
         run: |
@@ -41,14 +41,14 @@ jobs:
       # RAILWAY DEPLOY
       # Railway Deploy - SERVICE names use koro
       - name: Deploy Server to Railway
-        uses: railwayapp/github-actions@v1.0.5
+        uses: aormsby/railway-app-deploy-action
         with:
           token: ${{ secrets.RAILWAY_TOKEN }}
           service: fullstack-server  # ✅ SERVICE name
           project: fullstack-app     # ✅ PROJECT name
       
       - name: Deploy Client to Railway
-        uses: railwayapp/github-actions@v1.0.5
+        uses: aormsby/railway-app-deploy-action
         with:
           token: ${{ secrets.RAILWAY_TOKEN }}
           service: fullstack-client  # ✅ SERVICE name
